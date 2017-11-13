@@ -1,0 +1,45 @@
+version: 2.0
+jobs:
+  build:
+    working_directory: app/
+    docker:
+      - image: russcox/apptest
+        environment:
+          DB_HOST: localhost
+          DB_NAME: test
+          DB_USER: root
+          DB_PASS: toor
+          DB_PORT: 3306
+      - image: mysql:8
+        environment:
+          MYSQL_ROOT_PASSWORD: toor
+          MYSQL_DATABASE: test
+          MYSQL_USER: test
+          MYSQL_PASSWORD: test
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      - run:
+          name: Install liquibase
+          command: |
+             wget https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.5.3/liquibase-3.5.3-bin.tar.gz
+             tar -xvzf liquibase-3.5.3-bin.tar.gz
+      - run:
+          name: Apply changelog to database
+          command: |
+             cd db
+             ../liquibase update
+      - run: 
+          name: Build image
+          command: cd ../app && docker build -t russcox/apptest .
+      - run:
+          name: Run test
+          command: curl --retry 10 --retry-delay 5 -v http://localhost:3000/api/user
