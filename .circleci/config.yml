@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: app/
     docker:
-      - image: russcox/apptest
+      - image: circleci/node:7.10
         environment:
           DB_HOST: localhost
           DB_NAME: test
@@ -37,7 +37,7 @@ jobs:
           command: |
              cd db
              ../liquibase update
-      - run: 
+      - run:
           name: Build image
           command: cd ../app && docker build -t russcox/apptest .
       - run:
