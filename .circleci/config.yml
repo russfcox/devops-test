@@ -29,7 +29,7 @@ jobs:
       - run:
           name: Run database migration
           command: |
-              npm install -g db-migrate
+              npm install db-migrate
               node_modules/db-migrate/bin/db-migrate/db-migrate up
       - run:
           name: Build image
