@@ -28,7 +28,9 @@ jobs:
              npm install
       - run:
           name: Run database migration
-          command: db-migrate up
+          command: |
+              npm install -g db-migrate
+              db-migrate up
       - run:
           name: Build image
           command: docker build -t russcox/apptest .
