@@ -1,8 +1,9 @@
 FROM node:9-alpine
 
+RUN apk update && apk add curl
 RUN mkdir /app
 WORKDIR /app
 COPY ./ /app/
 RUN npm install
 
-CMD npm start
+CMD DEBUG=express:* & npm start
