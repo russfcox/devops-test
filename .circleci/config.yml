@@ -24,6 +24,7 @@ jobs:
       - run:
           name: npm install
           command: |
+             ls -ltr
              cd app
              pwd
              ls -l
