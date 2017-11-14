@@ -45,7 +45,7 @@ jobs:
                docker build -t russcox/apptest .
       - run:
           name: Start app container
-          command: docker run -d -p "3000:3000" russcox/apptest app
+          command: docker run -d -p "3000:3000" russcox/apptest
       - run:
           name: Run test
           command: curl --retry 10 --retry-delay 5 -v http://localhost:3000/api/user
