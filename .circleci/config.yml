@@ -50,7 +50,7 @@ jobs:
                docker ps
       - run:
           name: Wait for db
-          command: dockerize -wait tcp://localhost:3000 -timeout 1m
+          command: dockerize -wait tcp://172.17.0.1:3000 -timeout 1m
       - run:
           name: Run test
           command: curl --retry 10 --retry-delay 5 -v http://localhost:3000/api/user
