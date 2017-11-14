@@ -30,7 +30,7 @@ jobs:
           name: Run database migration
           command: |
               npm install -g db-migrate
-              db-migrate up
+              node_modules/db-migrate/bin/db-migrate/db-migrate up
       - run:
           name: Build image
           command: docker build -t russcox/apptest .
