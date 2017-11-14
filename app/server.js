@@ -18,11 +18,11 @@ app.use(expressValidator());
 var connection  = require('express-myconnection'),
     mysql = require('mysql');
 
-var DB_HOST = process.env.DB_HOST
-var DB_USER = process.env.DB_USER
-var DB_PASS = process.env.DB_PASS
-var DB_NAME = process.env.DB_NAME
-var DB_PORT = process.env.DB_PORT
+var DB_HOST = process.env.DB_HOST || 'localhost'
+var DB_USER = process.env.DB_USER || 'root'
+var DB_PASS = process.env.DB_PASS || 'toor'
+var DB_NAME = process.env.DB_NAME || 'test'
+var DB_PORT = process.env.DB_PORT || 3306
 
 app.use(
 
