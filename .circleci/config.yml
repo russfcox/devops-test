@@ -46,11 +46,11 @@ jobs:
       - run:
           name: Start app container
           command: |
-               docker run -d -p "3000:3000" -e DB_HOST="localhost" russcox/apptest
+               docker run -d --name app -p "3000:3000" -e DB_HOST="localhost" russcox/apptest
                docker ps
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://172.17.0.1:3000 -timeout 1m
+      # - run:
+      #     name: Wait for app container
+      #     command: dockerize -wait tcp://172.17.0.1:3000 -timeout 1m
       - run:
           name: Run test
-          command: curl --retry 10 --retry-delay 5 -v http://localhost:3000/api/user
+          command: docker exec app curl --retry 10 --retry-delay 5 -v http://localhost:3000/api/user
