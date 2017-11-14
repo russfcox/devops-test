@@ -29,11 +29,14 @@ jobs:
       - run:
           name: Run database migration
           command: |
+              cd app
               npm install db-migrate
               node_modules/db-migrate/bin/db-migrate/db-migrate up
       - run:
           name: Build image
-          command: docker build -t russcox/apptest .
+          command: |
+               cd app
+               docker build -t russcox/apptest .
       - run:
           name: Start app container
           command: docker run -d -p "3000:3000" russcox/apptest app
