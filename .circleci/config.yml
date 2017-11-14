@@ -26,19 +26,25 @@ jobs:
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      # - run:
+      #     name: Install liquibase
+      #     command: |
+      #        wget https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.5.3/liquibase-3.5.3-bin.tar.gz
+      #        tar -xvzf liquibase-3.5.3-bin.tar.gz
       - run:
-          name: Install liquibase
+          name: npm install
           command: |
-             wget https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.5.3/liquibase-3.5.3-bin.tar.gz
-             tar -xvzf liquibase-3.5.3-bin.tar.gz
+             cd app
+             npm install
       - run:
-          name: Apply changelog to database
-          command: |
-             cd db
-             ../liquibase update
+          name: Run database migration
+          command: db-migrate up
       - run:
           name: Build image
-          command: cd ../app && docker build -t russcox/apptest .
+          command: docker build -t russcox/apptest .
+     - run:
+          name: Start app container
+          command: docker run -d -p "3000:3000" russcox/apptest app
       - run:
           name: Run test
           command: curl --retry 10 --retry-delay 5 -v http://localhost:3000/api/user
