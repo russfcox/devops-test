@@ -1,6 +1,7 @@
 version: 2.0
 jobs:
   build:
+    working_directory: app
     docker:
       - image: circleci/node:7.10
         environment:
@@ -24,19 +25,18 @@ jobs:
       - run:
           name: npm install
           command: |
-             cd app
+            #  cd app
              npm install
       - run:
           name: Run database migration
           command: |
-              cd app
-              ls -l
+              # cd app
               # npm install db-migrate
               node_modules/db-migrate/bin/db-migrate up
       - run:
           name: Build image
           command: |
-               cd app
+              #  cd app
                docker build -t russcox/apptest .
       - run:
           name: Start app container
