@@ -1,0 +1,28 @@
+[
+    {
+        "name": "app",
+        "image": "russcox/apptest",
+        "cpu": 10,
+        "memory": 512,
+        "links": [],
+        "portMappings": [
+            {
+                "containerPort": 3000,
+                "hostPort": 3000,
+                "protocol": "tcp"
+            }
+        ],
+        "essential": true,
+        "entryPoint": [],
+        "command": [],
+        "environment": [ {
+          "DB_HOST": "${aws_db_instance.default.endpoint}",
+          "DB_PASS": "test",
+          "DB_USER": "test",
+          "DB_NAME": "${aws_db_instance.default.name}"
+          }
+        ],
+        "mountPoints": [],
+        "volumesFrom": []
+    }
+]
