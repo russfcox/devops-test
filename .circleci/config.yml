@@ -72,9 +72,9 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      # - run:
+      #     name: Wait for db
+      #     command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - run:
           name: Run database migration
           command: |
@@ -91,4 +91,6 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - test
+      - test:
+        requires:
+          - build
