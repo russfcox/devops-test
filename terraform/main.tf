@@ -1,7 +1,8 @@
 provider "aws" {
-    access_key = "${var.aws_access_key}"
-    secret_key = "${var.aws_secret_key}"
+    # access_key = "${var.aws_access_key}"
+    # secret_key = "${var.aws_secret_key}"
     region = "${var.region}"
+    shared_credentials_file = "~/.aws/credentials"
 }
 
 resource "aws_key_pair" "key" {
@@ -31,6 +32,12 @@ resource "aws_subnet" "main" {
     vpc_id = "${aws_vpc.main.id}"
     cidr_block = "10.0.1.0/24"
     availability_zone = "${var.availability_zone}"
+}
+
+resource "aws_subnet" "secondary" {
+    vpc_id = "${aws_vpc.main.id}"
+    availability_zone = "${var.availability_zone2}"
+    cidr_block = "10.0.2.0/24"
 }
 
 resource "aws_internet_gateway" "main" {
@@ -143,26 +150,4 @@ resource "aws_iam_instance_profile" "ecs" {
     name = "ecs-instance-profile"
     path = "/"
     role = "${aws_iam_role.ecs_host_role.name}"
-}
-
-resource "aws_db_subnet_group" "default" {
-  name       = "main"
-  subnet_ids = ["${aws_subnet.main.id}"]
-
-  tags {
-    Name = "My DB subnet group"
-  }
-}
-
-resource "aws_db_instance" "default" {
-  allocated_storage    = 1
-  storage_type         = "gp2"
-  engine               = "mysql"
-  engine_version       = "5.6.17"
-  instance_class       = "db.t1.micro"
-  name                 = "test"
-  username             = "test"
-  password             = "test"
-  db_subnet_group_name = "${aws_db_subnet_group.default.name}"
-  parameter_group_name = "default.mysql5.6"
 }

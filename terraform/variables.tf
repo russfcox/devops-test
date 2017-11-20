@@ -1,10 +1,10 @@
-variable "aws_access_key" {
-    description = "The AWS access key."
-}
-
-variable "aws_secret_key" {
-    description = "The AWS secret key."
-}
+# variable "aws_access_key" {
+#     description = "The AWS access key."
+# }
+#
+# variable "aws_secret_key" {
+#     description = "The AWS secret key."
+# }
 
 variable "region" {
     description = "The AWS region to create resources in."
@@ -13,8 +13,13 @@ variable "region" {
 
 # TODO: support multiple availability zones, and default to it.
 variable "availability_zone" {
-    description = "The availability zone"
+    description = "availability zone"
     default = "eu-west-1a"
+}
+
+variable "availability_zone2" {
+    description = "second availability zone"
+    default = "eu-west-1b"
 }
 
 variable "ecs_cluster_name" {
