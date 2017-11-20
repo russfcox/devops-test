@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Push image to registry
           command: |
-               docker login -e russfcox@gmail.com -u $dh_user -p $dh_pass
+               docker login -u $dh_user -p $dh_pass
                docker push russcox/apptest
       # - run:
       #     name: Wait for app container
