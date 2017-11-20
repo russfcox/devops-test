@@ -88,9 +88,9 @@ jobs:
           command: curl --retry 10 --retry-delay 5 -v http://localhost:3000/api/user
 workflows:
   version: 2
-  build_and_test:
+  build-test:
     jobs:
       - build
       - test:
-        requires:
-          - build
+          requires:
+            - build
