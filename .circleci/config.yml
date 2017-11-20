@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Push image to registry
           command: |
-               docker login -u russcox --password-stdin < `cat $dh_pass`
+               echo $dh_pass | docker login -u russcox --password-stdin
                docker push russcox/apptest
       # - run:
       #     name: Wait for app container
