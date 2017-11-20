@@ -44,13 +44,18 @@ jobs:
                pwd
                docker build -t russcox/apptest .
       - run:
-          name: Start app container
+          name: Push image to registry
           command: |
-               docker run -d --name app -p "3000:3000" -e DB_HOST="localhost" russcox/apptest
-               docker ps
+               docker login -u russcox --password-stdin < ${dh_pass}
+               docker push russcox/apptest
       # - run:
       #     name: Wait for app container
       #     command: dockerize -wait tcp://172.17.0.1:3000 -timeout 1m
       # - run:
       #     name: Run test
       #     command: docker exec app curl --retry 10 --retry-delay 5 -v http://172.17.0.1:3000/api/user
+  test:
+    docker:
+      - image: russcox/apptest:latest
+      steps:
+        - run: curl --retry 10 --retry-delay 5 -v http://localhost:3000/api/user
