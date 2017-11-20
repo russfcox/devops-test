@@ -78,9 +78,9 @@ jobs:
       - run:
           name: Run database migration
           command: |
-              # cd app
-              # pwd
-              # ls -l
+              cd /app
+              pwd
+              ls -l
               # npm install db-migrate
               node_modules/db-migrate/bin/db-migrate up
       - run:
