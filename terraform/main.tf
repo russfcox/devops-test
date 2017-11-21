@@ -6,7 +6,7 @@ provider "aws" {
 }
 
 resource "aws_key_pair" "key" {
-    key_name = "ssh-key-${var.env-name}"
+    key_name = "ssh-key-${terraform.workspace}"
     public_key = "${file(var.ssh_pubkey_file)}"
 }
 
@@ -14,7 +14,7 @@ resource "aws_vpc" "main" {
     cidr_block = "10.0.0.0/16"
     enable_dns_hostnames = true
     tags {
-      Name = "${var.env-name}"
+      Name = "${terraform.workspace}"
     }
 }
 
@@ -25,7 +25,7 @@ resource "aws_route_table" "external" {
         gateway_id = "${aws_internet_gateway.main.id}"
     }
     tags {
-      Name = "${var.env-name}"
+      Name = "${terraform.workspace}"
     }
 }
 
@@ -40,7 +40,7 @@ resource "aws_subnet" "main" {
     cidr_block = "10.0.1.0/24"
     availability_zone = "${var.availability_zone}"
     tags {
-      Name = "${var.env-name}"
+      Name = "${terraform.workspace}"
     }
 }
 
@@ -49,19 +49,19 @@ resource "aws_subnet" "secondary" {
     availability_zone = "${var.availability_zone2}"
     cidr_block = "10.0.2.0/24"
     tags {
-      Name = "${var.env-name}"
+      Name = "${terraform.workspace}"
     }
 }
 
 resource "aws_internet_gateway" "main" {
     vpc_id = "${aws_vpc.main.id}"
     tags {
-      Name = "${var.env-name}"
+      Name = "${terraform.workspace}"
     }
 }
 
 resource "aws_security_group" "load_balancers" {
-    name = "load_balancers_${var.env-name}"
+    name = "load_balancers_${terraform.workspace}"
     description = "Allows all traffic"
     vpc_id = "${aws_vpc.main.id}"
 
@@ -83,7 +83,7 @@ resource "aws_security_group" "load_balancers" {
 }
 
 resource "aws_security_group" "ecs" {
-    name = "ecs_${var.env-name}"
+    name = "ecs_${terraform.workspace}"
     description = "Allows all traffic"
     vpc_id = "${aws_vpc.main.id}"
 
@@ -112,7 +112,7 @@ resource "aws_security_group" "ecs" {
 }
 
 resource "aws_security_group" "rds" {
-  name = "rds_${var.env-name}"
+  name = "rds_${terraform.workspace}"
   description = "allows traffic to rds instance"
   vpc_id = "${aws_vpc.main.id}"
   ingress {
@@ -132,12 +132,12 @@ resource "aws_security_group" "rds" {
 
 
 resource "aws_ecs_cluster" "main" {
-    name = "${var.env-name}"
+    name = "ECS${terraform.workspace}"
 }
 
 resource "aws_autoscaling_group" "ecs-cluster" {
     availability_zones = ["${var.availability_zone}", "${var.availability_zone2}"]
-    name = "ECS ${var.ecs_cluster_name}"
+    name = "ECS app ${terraform.workspace}"
     min_size = "${var.autoscale_min}"
     max_size = "${var.autoscale_max}"
     desired_capacity = "${var.autoscale_desired}"
@@ -147,7 +147,7 @@ resource "aws_autoscaling_group" "ecs-cluster" {
 }
 
 resource "aws_launch_configuration" "ecs" {
-    name = "ECS ${var.ecs_cluster_name}"
+    name = "ECS app ${terraform.workspace}"
     image_id = "${lookup(var.amis, var.region)}"
     instance_type = "${var.instance_type}"
     security_groups = ["${aws_security_group.ecs.id}"]
@@ -155,34 +155,34 @@ resource "aws_launch_configuration" "ecs" {
     # TODO: is there a good way to make the key configurable sanely?
     key_name = "${aws_key_pair.key.key_name}"
     associate_public_ip_address = true
-    user_data = "#!/bin/bash\necho ECS_CLUSTER='${var.ecs_cluster_name}' > /etc/ecs/ecs.config"
+    user_data = "#!/bin/bash\necho ECS_CLUSTER='ECS${terraform.workspace}' > /etc/ecs/ecs.config"
 }
 
 
 resource "aws_iam_role" "ecs_host_role" {
-    name = "ecs_host_role_${var.env-name}"
+    name = "ecs_host_role_${terraform.workspace}"
     assume_role_policy = "${file("policies/ecs-role.json")}"
 }
 
 resource "aws_iam_role_policy" "ecs_instance_role_policy" {
-    name = "ecs_instance_role_policy_${var.env-name}"
+    name = "ecs_instance_role_policy_${terraform.workspace}"
     policy = "${file("policies/ecs-instance-role-policy.json")}"
     role = "${aws_iam_role.ecs_host_role.id}"
 }
 
 resource "aws_iam_role" "ecs_service_role" {
-    name = "ecs_service_role_${var.env-name}"
+    name = "ecs_service_role_${terraform.workspace}"
     assume_role_policy = "${file("policies/ecs-role.json")}"
 }
 
 resource "aws_iam_role_policy" "ecs_service_role_policy" {
-    name = "ecs_service_role_policy_${var.env-name}"
+    name = "ecs_service_role_policy_${terraform.workspace}"
     policy = "${file("policies/ecs-service-role-policy.json")}"
     role = "${aws_iam_role.ecs_service_role.id}"
 }
 
 resource "aws_iam_instance_profile" "ecs" {
-    name = "ecs-instance-profile_${var.env-name}"
+    name = "ecs-instance-profile_${terraform.workspace}"
     path = "/"
     role = "${aws_iam_role.ecs_host_role.name}"
 }

@@ -6,10 +6,6 @@
 #     description = "The AWS secret key."
 # }
 
-variable "env-name" {
-  default = "dev"
-}
-
 variable "app-name" {
   default = "app"
 }
