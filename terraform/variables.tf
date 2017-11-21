@@ -6,6 +6,16 @@
 #     description = "The AWS secret key."
 # }
 
+variable "env-name" {
+  default = "dev"
+}
+
+variable "app-name" {
+  default = "app"
+}
+
+variable "dbpass" { default = "testpassword" }
+
 variable "region" {
     description = "The AWS region to create resources in."
     default = "eu-west-1"

@@ -1,21 +1,26 @@
 resource "aws_db_subnet_group" "default" {
-  name       = "main"
+  name       = "main-${var.env-name}"
   subnet_ids = ["${aws_subnet.main.id}", "${aws_subnet.secondary.id}"]
 
   tags {
-    Name = "My DB subnet group"
+    Name = "${var.env-name} DB subnet group"
   }
 }
 
 resource "aws_db_instance" "default" {
-  allocated_storage    = 1
-  storage_type         = "gp2"
+  name                 = "db-${var.env-name}"
+  allocated_storage    = 5
+  storage_type         = "standard"
   engine               = "mysql"
-  engine_version       = "5.6.17"
-  instance_class       = "db.t1.micro"
+  engine_version       = "5.7.19"
+  instance_class       = "db.t2.micro"
   name                 = "test"
   username             = "test"
-  password             = "test"
+  password             = "testpassword"
   db_subnet_group_name = "${aws_db_subnet_group.default.name}"
-  parameter_group_name = "default.mysql5.6"
+  skip_final_snapshot = true
+  final_snapshot_identifier = "dbsnap-deleteme-${var.env-name}"
+  apply_immediately = true
+  vpc_security_group_ids = ["${aws_security_group.rds.id}"]
+  # parameter_group_name = "default.mysql5.6"
 }

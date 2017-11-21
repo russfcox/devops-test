@@ -6,13 +6,16 @@ provider "aws" {
 }
 
 resource "aws_key_pair" "key" {
-    key_name = "ssh-key"
+    key_name = "ssh-key-${var.env-name}"
     public_key = "${file(var.ssh_pubkey_file)}"
 }
 
 resource "aws_vpc" "main" {
     cidr_block = "10.0.0.0/16"
     enable_dns_hostnames = true
+    tags {
+      Name = "${var.env-name}"
+    }
 }
 
 resource "aws_route_table" "external" {
@@ -21,31 +24,44 @@ resource "aws_route_table" "external" {
         cidr_block = "0.0.0.0/0"
         gateway_id = "${aws_internet_gateway.main.id}"
     }
+    tags {
+      Name = "${var.env-name}"
+    }
 }
 
 resource "aws_route_table_association" "external-main" {
     subnet_id = "${aws_subnet.main.id}"
     route_table_id = "${aws_route_table.external.id}"
+
 }
 
 resource "aws_subnet" "main" {
     vpc_id = "${aws_vpc.main.id}"
     cidr_block = "10.0.1.0/24"
     availability_zone = "${var.availability_zone}"
+    tags {
+      Name = "${var.env-name}"
+    }
 }
 
 resource "aws_subnet" "secondary" {
     vpc_id = "${aws_vpc.main.id}"
     availability_zone = "${var.availability_zone2}"
     cidr_block = "10.0.2.0/24"
+    tags {
+      Name = "${var.env-name}"
+    }
 }
 
 resource "aws_internet_gateway" "main" {
     vpc_id = "${aws_vpc.main.id}"
+    tags {
+      Name = "${var.env-name}"
+    }
 }
 
 resource "aws_security_group" "load_balancers" {
-    name = "load_balancers"
+    name = "load_balancers_${var.env-name}"
     description = "Allows all traffic"
     vpc_id = "${aws_vpc.main.id}"
 
@@ -67,7 +83,7 @@ resource "aws_security_group" "load_balancers" {
 }
 
 resource "aws_security_group" "ecs" {
-    name = "ecs"
+    name = "ecs_${var.env-name}"
     description = "Allows all traffic"
     vpc_id = "${aws_vpc.main.id}"
 
@@ -95,13 +111,32 @@ resource "aws_security_group" "ecs" {
     }
 }
 
+resource "aws_security_group" "rds" {
+  name = "rds_${var.env-name}"
+  description = "allows traffic to rds instance"
+  vpc_id = "${aws_vpc.main.id}"
+  ingress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    security_groups = ["${aws_security_group.ecs.id}"]
+  }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+}
+
 
 resource "aws_ecs_cluster" "main" {
-    name = "${var.ecs_cluster_name}"
+    name = "${var.env-name}"
 }
 
 resource "aws_autoscaling_group" "ecs-cluster" {
-    availability_zones = ["${var.availability_zone}"]
+    availability_zones = ["${var.availability_zone}", "${var.availability_zone2}"]
     name = "ECS ${var.ecs_cluster_name}"
     min_size = "${var.autoscale_min}"
     max_size = "${var.autoscale_max}"
@@ -125,29 +160,29 @@ resource "aws_launch_configuration" "ecs" {
 
 
 resource "aws_iam_role" "ecs_host_role" {
-    name = "ecs_host_role"
+    name = "ecs_host_role_${var.env-name}"
     assume_role_policy = "${file("policies/ecs-role.json")}"
 }
 
 resource "aws_iam_role_policy" "ecs_instance_role_policy" {
-    name = "ecs_instance_role_policy"
+    name = "ecs_instance_role_policy_${var.env-name}"
     policy = "${file("policies/ecs-instance-role-policy.json")}"
     role = "${aws_iam_role.ecs_host_role.id}"
 }
 
 resource "aws_iam_role" "ecs_service_role" {
-    name = "ecs_service_role"
+    name = "ecs_service_role_${var.env-name}"
     assume_role_policy = "${file("policies/ecs-role.json")}"
 }
 
 resource "aws_iam_role_policy" "ecs_service_role_policy" {
-    name = "ecs_service_role_policy"
+    name = "ecs_service_role_policy_${var.env-name}"
     policy = "${file("policies/ecs-service-role-policy.json")}"
     role = "${aws_iam_role.ecs_service_role.id}"
 }
 
 resource "aws_iam_instance_profile" "ecs" {
-    name = "ecs-instance-profile"
+    name = "ecs-instance-profile_${var.env-name}"
     path = "/"
     role = "${aws_iam_role.ecs_host_role.name}"
 }

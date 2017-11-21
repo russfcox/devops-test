@@ -1,7 +1,7 @@
 [
     {
         "name": "app",
-        "image": "russcox/apptest",
+        "image": "russcox/apptest:latest",
         "cpu": 10,
         "memory": 512,
         "links": [],
@@ -16,10 +16,20 @@
         "entryPoint": [],
         "command": [],
         "environment": [ {
-          "DB_HOST": "${aws_db_instance.default.endpoint}",
-          "DB_PASS": "test",
-          "DB_USER": "test",
-          "DB_NAME": "${aws_db_instance.default.name}"
+          "name": "DB_HOST",
+          "value": "${dbhost}"
+         },
+         {
+          "name": "DB_USER",
+          "value": "${dbuser}"
+         },
+         {
+          "name": "DB_NAME",
+          "value": "${dbname}"
+        },
+          {
+            "name": "DB_PASS",
+            "value": "${dbpass}"
           }
         ],
         "mountPoints": [],
