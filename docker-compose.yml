@@ -1,17 +1,15 @@
 version: '2'
 services:
-
   lb:
-    image: russcox/apptest-lb
+    image: russcox/app-lb
     build:
       context: lb/
     ports:
       - 80:80
     links:
       - app
-
   app:
-    image: russcox/apptest
+    image: russcox/app
     build:
       context: app/
     ports:
@@ -25,7 +23,6 @@ services:
       - DEBUG=express:*
     links:
       - db
-
   db:
     image: mysql:8
     volumes:
@@ -37,6 +34,5 @@ services:
        - MYSQL_DATABASE=test
        - MYSQL_USER=test
        - MYSQL_PASSWORD=test
-
 volumes:
   mysqldata:
