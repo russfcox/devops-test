@@ -57,7 +57,7 @@ jobs:
           name: Spin up test AWS environment
           command: |
             cd terraform
-            terraform init
+            # terraform init
             terraform workspace select test
             terraform validate
             terraform plan
