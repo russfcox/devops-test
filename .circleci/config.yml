@@ -51,7 +51,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk install py-pip
+            apk add py-pip
             pip install terraform
       - run:
           name: Spin up test AWS environment
