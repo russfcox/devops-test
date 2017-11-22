@@ -76,16 +76,17 @@ jobs:
       #     name: Wait for db
       #     command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - run:
-          name: Run database migration
+          name: Run test database migration
           command: |
               cd /app
-              pwd
-              ls -l
               # npm install db-migrate
               node_modules/db-migrate/bin/db-migrate up
       - run:
           name: Run test
           command: |
+             cd /app
+             env
+             ls -l
              npm start
              netstat -napt
              curl --retry 10 --retry-delay 5 -v http://172.17.0.1:3000/api/user

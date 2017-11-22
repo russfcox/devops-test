@@ -130,7 +130,6 @@ resource "aws_security_group" "rds" {
 
 }
 
-
 resource "aws_ecs_cluster" "main" {
     name = "ECS${terraform.workspace}"
 }
