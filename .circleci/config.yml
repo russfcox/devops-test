@@ -45,14 +45,14 @@ jobs:
               fi
   deploytest:
     docker:
-      - image: docker
+      - image: docker:17.05.0-ce-git
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add py-pip
-            pip install terraform
+            apk update
+            apk add terraform
       - run:
           name: Spin up test AWS environment
           command: |
