@@ -65,5 +65,5 @@ variable "instance_type" {
 
 variable "ssh_pubkey_file" {
     description = "Path to an SSH public key"
-    default = "~/.ssh/id_rsa.aws.pub"
+    default = "sshkeys/id_rsa.aws.pub"
 }
