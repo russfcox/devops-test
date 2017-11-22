@@ -49,26 +49,26 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install dependencies
-        command: |
-          apk add --no-cache \
-            py-pip=9.0.0-r1
-          pip install \
-            awscli==1.11.76 \
-            terraform \
+          name: Install dependencies
+          command: |
+            apk add --no-cache \
+              py-pip=9.0.0-r1
+            pip install \
+              awscli==1.11.76 \
+              terraform \
       - run:
-        name: Spin up test AWS environment
-        command: |
-          cd terraform
-          terraform workspace select test
-          terraform validate
-          terraform plan
+          name: Spin up test AWS environment
+          command: |
+            cd terraform
+            terraform workspace select test
+            terraform validate
+            terraform plan
       - run:
-        name: test ephemeral environment
-        command: echo "run tests here"
+          name: test ephemeral environment
+          command: echo "run tests here"
       - run:
-        name: Tear down test environment
-        command: echo "run teardown here"
+          name: Tear down test environment
+          command: echo "run teardown here"
 workflows:
   version: 2
   build-test:
