@@ -87,7 +87,7 @@ jobs:
              cd /app
              env
              ls -l
-             npm start
+             nohup npm start &
              netstat -napt
              curl --retry 10 --retry-delay 5 -v http://172.17.0.1:3000/api/user
 workflows:
