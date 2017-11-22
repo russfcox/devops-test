@@ -6,4 +6,4 @@ WORKDIR /app
 COPY ./ /app/
 RUN npm install
 
-CMD DEBUG=express:* & npm start
+CMD DEBUG=express:* & npm run deploy

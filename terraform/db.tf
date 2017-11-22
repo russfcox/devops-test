@@ -22,5 +22,6 @@ resource "aws_db_instance" "default" {
   final_snapshot_identifier = "dbsnap-deleteme-${terraform.workspace}"
   apply_immediately = true
   vpc_security_group_ids = ["${aws_security_group.rds.id}"]
+  publicly_accessible = true
   # parameter_group_name = "default.mysql5.6"
 }

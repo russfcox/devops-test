@@ -4,6 +4,13 @@
   "version": "0.0.1",
   "private": true,
   "main": "server.js",
+  "scripts": {
+    "db-migrate": "db-migrate up",
+    "deploy": "db-migrate up && npm start",
+    "db-rollback": "db-rollback",
+    "db-create": "db-create",
+    "db-status": "db-status"
+  },
   "dependencies": {
     "body-parser": "1.9.0",
     "ejs": "^1.0.0",

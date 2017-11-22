@@ -29,11 +29,12 @@ data "template_file" "task-http" {
       dbpass = "${aws_db_instance.default.password}"
       dbhost = "${aws_db_instance.default.address}"
       dbuser = "${aws_db_instance.default.username}"
+      imgtag = "${terraform.workspace == "production" ? "production" : "latest" }"
     }
 }
 
 resource "aws_ecs_task_definition" "test-http" {
-    family = "test-http"
+    family = "app-${terraform.workspace}"
     container_definitions = "${data.template_file.task-http.rendered}"
 }
 

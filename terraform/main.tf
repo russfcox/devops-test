@@ -121,6 +121,12 @@ resource "aws_security_group" "rds" {
     protocol = "-1"
     security_groups = ["${aws_security_group.ecs.id}"]
   }
+  ingress {
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
     from_port = 0
     to_port = 0
@@ -135,7 +141,7 @@ resource "aws_ecs_cluster" "main" {
 }
 
 resource "aws_autoscaling_group" "ecs-cluster" {
-    availability_zones = ["${var.availability_zone}", "${var.availability_zone2}"]
+    # availability_zones = ["${var.availability_zone}", "${var.availability_zone2}"]
     name = "ECS app ${terraform.workspace}"
     min_size = "${var.autoscale_min}"
     max_size = "${var.autoscale_max}"
@@ -151,7 +157,6 @@ resource "aws_launch_configuration" "ecs" {
     instance_type = "${var.instance_type}"
     security_groups = ["${aws_security_group.ecs.id}"]
     iam_instance_profile = "${aws_iam_instance_profile.ecs.name}"
-    # TODO: is there a good way to make the key configurable sanely?
     key_name = "${aws_key_pair.key.key_name}"
     associate_public_ip_address = true
     user_data = "#!/bin/bash\necho ECS_CLUSTER='ECS${terraform.workspace}' > /etc/ecs/ecs.config"

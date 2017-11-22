@@ -1,7 +1,7 @@
 [
     {
         "name": "app",
-        "image": "russcox/apptest:latest",
+        "image": "russcox/app:${imgtag}",
         "cpu": 10,
         "memory": 512,
         "links": [],
@@ -13,8 +13,6 @@
             }
         ],
         "essential": true,
-        "entryPoint": [],
-        "command": [],
         "environment": [ {
           "name": "DB_HOST",
           "value": "${dbhost}"
@@ -31,8 +29,6 @@
             "name": "DB_PASS",
             "value": "${dbpass}"
           }
-        ],
-        "mountPoints": [],
-        "volumesFrom": []
+        ]
     }
 ]
