@@ -9,18 +9,17 @@ jobs:
           DB_USER: root
           DB_PASS: toor
           DB_PORT: 3306
-      # - image: mysql:8
-      #   environment:
-      #     MYSQL_ROOT_PASSWORD: toor
-      #     MYSQL_DATABASE: test
-      #     MYSQL_USER: test
-      #     MYSQL_PASSWORD: test
     steps:
       - checkout
       - setup_remote_docker
-      # - run:
-      #     name: Wait for db
-      #     command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache \
+              py-pip=9.0.0-r1
+            pip install \
+              docker-compose==1.12.0 \
+              awscli==1.11.76
       - run:
           name: npm install
           command: |
@@ -29,14 +28,6 @@ jobs:
              pwd
              ls -l
              npm install
-      # - run:
-      #     name: Run database migration
-      #     command: |
-      #         cd app
-      #         pwd
-      #         ls -l
-      #         # npm install db-migrate
-      #         node_modules/db-migrate/bin/db-migrate up
       - run:
           name: Build image
           command: |
@@ -44,57 +35,14 @@ jobs:
                pwd
                docker build -t russcox/apptest .
       - run:
+          name: Test containers
+          command: |
+               docker-compose up -d
+      - run:
           name: Push image to registry
           command: |
-               docker login -u $dh_user -p $dh_pass
-               docker push russcox/apptest
-      # - run:
-      #     name: Wait for app container
-      #     command: dockerize -wait tcp://172.17.0.1:3000 -timeout 1m
-      # - run:
-      #     name: Run test
-      #     command: docker exec app curl --retry 10 --retry-delay 5 -v http://172.17.0.1:3000/api/user
-  test:
-    docker:
-      - image: russcox/apptest:latest
-        environment:
-          DB_HOST: localhost
-          DB_NAME: test
-          DB_USER: root
-          DB_PASS: toor
-          DB_PORT: 3306
-      - image: mysql:8
-        environment:
-          MYSQL_ROOT_PASSWORD: toor
-          MYSQL_DATABASE: test
-          MYSQL_USER: test
-          MYSQL_PASSWORD: test
-    steps:
-      - checkout
-      - setup_remote_docker
-      # - run:
-      #     name: Wait for db
-      #     command: dockerize -wait tcp://localhost:3306 -timeout 1m
-      - run:
-          name: Run test database migration
-          command: |
-              cd /app
-              # npm install db-migrate
-              node_modules/db-migrate/bin/db-migrate up
-      - run:
-          name: Run test
-          command: |
-             cd /app
-             env
-             ls -l
-             nohup npm start &
-             netstat -napt
-             curl --retry 10 --retry-delay 5 -v http://localhost:3000/api/user
-workflows:
-  version: 2
-  build-test:
-    jobs:
-      - build
-      - test:
-          requires:
-            - build
+              if [ "$ {CIRCLE_BRANCH}" == "master" ]; then
+                 docker login -u $dh_user -p $dh_pass
+                 docker tag russcox/app russcox/app:${CIRCLE_SHA1}
+                 docker push russcox/app:${CIRCLE_SHA1}
+              fi
