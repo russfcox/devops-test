@@ -6,7 +6,8 @@
       "Principal": {
         "Service": [
           "ecs.amazonaws.com",
-          "ec2.amazonaws.com"
+          "ec2.amazonaws.com",
+          "application-autoscaling.amazonaws.com"
         ]
       },
       "Effect": "Allow"

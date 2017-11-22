@@ -168,6 +168,11 @@ resource "aws_iam_role" "ecs_host_role" {
     assume_role_policy = "${file("policies/ecs-role.json")}"
 }
 
+# resource "aws_iam_role" "ecs_autoscaling_role" {
+#   name = "ecs_autoscaling_role_${terraform.workspace}"
+#   assume_role_policy = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceAutoscaleRole"
+# }
+
 resource "aws_iam_role_policy" "ecs_instance_role_policy" {
     name = "ecs_instance_role_policy_${terraform.workspace}"
     policy = "${file("policies/ecs-instance-role-policy.json")}"
