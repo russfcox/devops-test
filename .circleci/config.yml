@@ -51,15 +51,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache \
-              py-pip=9.0.0-r1
-            pip install \
-              awscli==1.11.76 \
-              terraform \
+            pip install terraform
       - run:
           name: Spin up test AWS environment
           command: |
             cd terraform
+            terraform init
             terraform workspace select test
             terraform validate
             terraform plan
