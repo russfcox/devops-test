@@ -38,7 +38,7 @@ jobs:
       - run:
           name: Push image to registry
           command: |
-              if [ "$ {CIRCLE_BRANCH}" == "master" ]; then
+              if [ "${CIRCLE_BRANCH}" == "master" ]; then
                  docker login -u $dh_user -p $dh_pass
                  docker tag russcox/app russcox/app:${CIRCLE_SHA1}
                  docker push russcox/app:${CIRCLE_SHA1}
