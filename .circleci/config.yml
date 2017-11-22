@@ -45,14 +45,14 @@ jobs:
               fi
   deploytest:
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: hashicorp/terraform:light
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            apk update
-            apk add terraform
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       apk update
+      #       apk add terraform
       - run:
           name: Spin up test AWS environment
           command: |
