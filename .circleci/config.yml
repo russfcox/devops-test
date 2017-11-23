@@ -87,24 +87,20 @@ jobs:
         command: curl --retry 10 --retry-delay 5 -v http://app-production.russcox.co.uk/api/user
 workflows:
   version: 2
-  build-test:
+  pipeline:
     jobs:
       - build
       - test:
           requires:
             - build
-      - hold:
-        # type: approval
-        requires:
-          - test
-        filters:
-          tags:
-            only: /release-*/
-          branches:
-            ignore: /.*/
       - tag:
           requires:
-            - hold
+            - test
+          filters:
+            tags:
+              only: /release-*/
+            branches:
+              ignore: /.*/
       - deploy:
           requires:
             - tag
