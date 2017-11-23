@@ -97,6 +97,11 @@ workflows:
         type: approval
         requires:
           - test
+        filters:
+          tags:
+            only: /release-*/
+          branches:
+            ignore: /.*/
       - tag:
           requires:
             - hold
