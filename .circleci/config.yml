@@ -63,6 +63,7 @@ jobs:
           name: Tag production docker image
           command: |
              docker login -u $dh_user -p $dh_pass
+             docker pull russcox/app:latest
              docker tag russcox/app:latest russcox/app:production
              docker push russcox/app:production
   deploy:
@@ -89,16 +90,14 @@ workflows:
   version: 2
   pipeline:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      - build:
           filters:
             branches:
               ignore: /release-*/
-      - tag:
+      - test:
           requires:
-            - test
+            - build
+      - tag:
           filters:
             branches:
               only: /release-*/
