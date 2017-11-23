@@ -33,7 +33,7 @@ jobs:
                  docker push russcox/app:${CIRCLE_SHA1}
                  docker push russcox/app:latest
               fi
-  deploytest:
+  test:
     docker:
       - image: hashicorp/terraform:light
     steps:
@@ -46,23 +46,46 @@ jobs:
             terraform workspace select test
             terraform validate
             terraform plan
+            terraform apply
       - run:
           name: test ephemeral environment
-          command: echo "run tests here"
+          command: curl --retry 10 --retry-delay 5 -v http://app-test.russcox.co.uk/api/user
       - run:
-          name: Tear down test environment
-          command: echo "run teardown here"
+          name: Tear down test AWS environment
+          command: |
+            cd terraform
+            terraform destroy -force
   deploy:
     docker:
-      - image: garland/aws-cli-docker
+      - image: hashicorp/terraform:light
+    steps:
+      - checkout
+      - run:
+        name: DEPLOY ALL THE THINGS!!!
+        command: |
+          cd terraform
+          terraform workspace select production
+          terraform taint aws_ecs_task_definition.test-http
+          terraform plan
+          terraform apply
+  smoketest:
+    docker:
+      - image: appropriate/curl
     steps:
       - run:
-        command:
+        name: Post deploy smoke test
+        command: curl --retry 10 --retry-delay 5 -v http://app-production.russcox.co.uk/api/user
 workflows:
   version: 2
   build-test:
     jobs:
       - build
-      - deploytest:
+      - test:
           requires:
             - build
+      - deploy:
+          requires:
+            - test
+      - smoketest:
+          requires:
+            - deploy
