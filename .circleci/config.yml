@@ -86,8 +86,8 @@ jobs:
       - image: appropriate/curl
     steps:
       - run:
-        name: Post deploy smoke test
-        command: curl --retry 25 --retry-delay 5 -v http://app-production.russcox.co.uk/api/user
+          name: Post deploy smoke test
+          command: curl --retry 25 --retry-delay 5 -v http://app-production.russcox.co.uk/api/user
 workflows:
   version: 2
   pipeline:
