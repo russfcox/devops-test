@@ -46,7 +46,7 @@ jobs:
             terraform workspace select test
             terraform validate
             terraform plan
-            terraform apply
+            terraform apply -auto-approve
       - run:
           name: test ephemeral environment
           command: curl --retry 10 --retry-delay 5 -v http://app-test.russcox.co.uk/api/user
@@ -55,6 +55,12 @@ jobs:
           command: |
             cd terraform
             terraform destroy -force
+      - run:
+          name: Tag production docker image
+          command: |
+             docker login -u $dh_user -p $dh_pass
+             docker tag russcox/app:latest russcox/app:production
+             docker push russcox/app:production
   deploy:
     docker:
       - image: hashicorp/terraform:light
@@ -67,7 +73,7 @@ jobs:
           terraform workspace select production
           terraform taint aws_ecs_task_definition.test-http
           terraform plan
-          terraform apply
+          terraform apply -auto-approve
   smoketest:
     docker:
       - image: appropriate/curl
