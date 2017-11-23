@@ -78,6 +78,6 @@ resource "aws_appautoscaling_target" "ecs_target" {
 #       scaling_adjustment          = -1
 #     }
 #   }
-
-  depends_on = ["aws_appautoscaling_target.ecs_target"]
-}
+#
+#   depends_on = ["aws_appautoscaling_target.ecs_target"]
+# }

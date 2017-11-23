@@ -3,13 +3,6 @@ jobs:
   build:
     docker:
       - image: docker:17.05.0-ce-git
-      # - image: circleci/node:7.10
-      #   environment:
-      #     DB_HOST: localhost
-      #     DB_NAME: test
-      #     DB_USER: root
-      #     DB_PASS: toor
-      #     DB_PORT: 3306
     steps:
       - checkout
       - setup_remote_docker
@@ -25,34 +18,26 @@ jobs:
           name: Build container images
           command: |
                docker-compose build
-      # - run:
-      #     name: Build image
-      #     command: |
-      #          cd app
-      #          pwd
-      #          docker build -t russcox/apptest .
       - run:
-          name: Test containers
+          name: Test containers and run test db migration
           command: |
-               docker-compose up -d
+               docker-compose up -d db
+               docker-compose up -d app lb
       - run:
           name: Push image to registry
           command: |
               if [ "${CIRCLE_BRANCH}" == "master" ]; then
                  docker login -u $dh_user -p $dh_pass
                  docker tag russcox/app russcox/app:${CIRCLE_SHA1}
+                 docker tag russcox/app russcox/app:latest
                  docker push russcox/app:${CIRCLE_SHA1}
+                 docker push russcox/app:latest
               fi
   deploytest:
     docker:
       - image: hashicorp/terraform:light
     steps:
       - checkout
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       apk update
-      #       apk add terraform
       - run:
           name: Spin up test AWS environment
           command: |
@@ -67,6 +52,12 @@ jobs:
       - run:
           name: Tear down test environment
           command: echo "run teardown here"
+  deploy:
+    docker:
+      - image: garland/aws-cli-docker
+    steps:
+      - run:
+        command:
 workflows:
   version: 2
   build-test:
