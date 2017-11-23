@@ -76,6 +76,7 @@ jobs:
           name: DEPLOY ALL THE THINGS!!!
           command: |
             cd terraform
+            terraform init
             terraform workspace select production
             terraform taint aws_ecs_task_definition.test-http
             terraform plan
