@@ -93,14 +93,15 @@ workflows:
       - test:
           requires:
             - build
+          filters:
+            branches:
+              ignore: /release-*/
       - tag:
           requires:
             - test
           filters:
-            tags:
-              only: /release-*/
             branches:
-              ignore: /.*/
+              only: /release-*/
       - deploy:
           requires:
             - tag
