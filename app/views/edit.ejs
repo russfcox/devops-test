@@ -15,7 +15,7 @@
         <td class="label">Email</td><td>: <input type="text" name="email" value="<%=data[0].email%>"></td>
      </tr>
       <tr>
-        <td class="label">Password</td><td>: <input type="password" name="password" value="<%=data[0].password%>"></td>
+        <td class="label">password</td><td>: <input type="password" name="password" value="<%=data[0].password%>"></td>
      </tr>
      <tr>
         <td class="label"></td>
@@ -26,34 +26,34 @@
     </table>
 </form>
  <script>
-    
+
         function saveUser(){
-           
+
            $.ajax({
-            
+
             url:"/api/user/"+<%=data[0].user_id%>,
             type:"put",
             data:$("#the-form").serialize(),
             success:function(res){
-                
+
                 window.location.href = '/api/user';
                 return false;
             },
             error:function(xhr, status, error){
-                
+
                 console.log(xhr.responseText);
                 var err = '';
                 $.each(JSON.parse(xhr.responseText) , function(i, item) {
-                   
+
                      err +='<li>'+item.msg+'</li>';
                 });
-                $(".err-area").html(err);    
+                $(".err-area").html(err);
                 return false;
             }
-            
+
            });
         }
-    
+
     </script>
 </body>
 </html>

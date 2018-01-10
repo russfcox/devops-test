@@ -11,11 +11,7 @@ CREATE TABLE IF NOT EXISTS `t_user` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 INSERT INTO `t_user` (`user_id`, `name`, `email`, `password`) VALUES
-(1, 'Mas Banyar', 'banyar@yahoo.com', '23235645yghgf'),
-(2, 'Mas Mapmup', 'mapmup@gmail.com', 'dncskdcndscsdcdsc'),
-(4, 'Boronong', 'borononn@yahoo.com', '032bcsjdncsdjc3223'),
-(5, 'Nadya Ek', 'nadya@yahoo.com', 'bonbon032932');
-
-
-INSERT INTO `t_user` (`user_id`, `name`, `email`, `password`) VALUES
-(6, 'Russ Cox', 'russfcox@gmail.com', 'testpass');
+(1, 'Russ', 'russfcox@gmail.com', 'eefah1zoo0xohb3Zayev'),
+(2, 'Bob', 'bob@gmail.com', 'Daavoh5id2amaek3uaca'),
+(4, 'John', 'john@yahoo.com', 'iu6uyagiegh8sahd8eFi'),
+(5, 'Nadya', 'nadya@yahoo.com', 'iMeiMahfoovah8ohLooB');
