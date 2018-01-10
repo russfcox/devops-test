@@ -9,6 +9,7 @@ resource "aws_db_subnet_group" "default" {
 
 resource "aws_db_instance" "default" {
   name                 = "db-${terraform.workspace}"
+  identifier           = "${var.app-name}-${terraform.workspace}"
   allocated_storage    = 5
   storage_type         = "standard"
   engine               = "mysql"

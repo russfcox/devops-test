@@ -49,7 +49,7 @@ jobs:
             terraform apply -auto-approve
       - run:
           name: test ephemeral environment
-          command: curl --retry 25 --retry-delay 5 -v http://app-test.russcox.co.uk/api/user
+          command: curl --retry 25 --retry-delay 5 -v http://russapp-test.russcox.co.uk/api/user
       - run:
           name: Tear down test AWS environment
           command: |

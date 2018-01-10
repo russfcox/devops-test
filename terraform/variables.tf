@@ -7,7 +7,7 @@
 # }
 
 variable "app-name" {
-  default = "app"
+  default = "russapp"
 }
 
 variable "dbpass" { default = "testpassword" }
@@ -37,8 +37,9 @@ variable "amis" {
     description = "Which AMI to spawn. Defaults to the AWS ECS optimized images."
     # TODO: support other regions.
     default = {
-        us-east-1 = "ami-ddc7b6b"
-        eu-west-1 = "ami-014ae578"
+        us-east-1 = "ami-ba722dc0"
+        eu-west-1 = "ami-acb020d5"
+        eu-west-2 = "ami-4d809829"
     }
 }
 
