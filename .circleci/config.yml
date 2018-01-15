@@ -95,7 +95,7 @@ workflows:
       - build:
           filters:
             branches:
-              ignore: /release-.*/
+              only: master
       - test:
           requires:
             - build
