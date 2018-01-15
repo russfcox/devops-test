@@ -7,7 +7,7 @@
 # }
 
 variable "app-name" {
-  default = "russapp"
+  default = "app"
 }
 
 variable "dbpass" { default = "testpassword" }

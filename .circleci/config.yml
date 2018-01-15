@@ -29,11 +29,11 @@ jobs:
               if [ "${CIRCLE_BRANCH}" == "master" ]; then
                  docker login -u $dh_user -p $dh_pass
                  docker tag russcox/app russcox/app:${CIRCLE_SHA1}
-                 docker tag russcox/app russcox/app:latest
                  docker push russcox/app:${CIRCLE_SHA1}
+                 docker tag russcox/app russcox/app:latest
                  docker push russcox/app:latest
               fi
-  test:
+  awstest:
     docker:
       - image: hashicorp/terraform:light
     steps:
@@ -49,13 +49,13 @@ jobs:
             terraform apply -auto-approve
       - run:
           name: test ephemeral environment
-          command: curl --retry 25 --retry-delay 5 -v http://russapp-test.russcox.co.uk/api/user
+          command: curl --retry 25 --retry-delay 5 -v http://app-test.russcox.co.uk/api/user
       - run:
           name: Tear down test AWS environment
           command: |
             cd terraform
             terraform destroy -force
-  tag:
+  prodtag:
     docker:
       - image: docker:17.05.0-ce-git
     steps:
@@ -65,6 +65,8 @@ jobs:
           command: |
              docker login -u $dh_user -p $dh_pass
              docker pull russcox/app:latest
+             docker tag russcox/app:latest russcox/app:${CIRCLE_SHA1}
+             docker push russcox/app:${CIRCLE_SHA1}
              docker tag russcox/app:latest russcox/app:production
              docker push russcox/app:production
   deploy:
@@ -95,11 +97,16 @@ workflows:
       - build:
           filters:
             branches:
-              only: master
-      - test:
+              only:
+                - /feature-.*/
+                - master
+      - awstest:
           requires:
             - build
-      - tag:
+          filters:
+            branches:
+              only: master
+      - prodtag:
           filters:
             branches:
               only: /release-.*/
