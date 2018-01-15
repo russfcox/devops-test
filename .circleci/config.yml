@@ -112,7 +112,7 @@ workflows:
               only: /release-.*/
       - deploy:
           requires:
-            - tag
+            - prodtag
       - smoketest:
           requires:
             - deploy
