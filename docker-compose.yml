@@ -6,6 +6,11 @@ services:
       context: lb/
     ports:
       - 80:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:/api/user"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
   app:
     image: russcox/app
     build:
@@ -23,6 +28,11 @@ services:
       mode: replicated
       replicas: 2
       # endpoint_mode: vip
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/user"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
   db:
     image: mysql:8
     volumes:
@@ -34,5 +44,9 @@ services:
        - MYSQL_DATABASE=test
        - MYSQL_USER=test
        - MYSQL_PASSWORD=test
+  # test:
+  #   image: russcox/app-test
+  #   build:
+  #     context: test/
 volumes:
   mysqldata:
