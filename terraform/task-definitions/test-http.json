@@ -3,7 +3,7 @@
         "name": "app",
         "image": "russcox/app:${imgtag}",
         "cpu": 10,
-        "memory": 512,
+        "memory": 400,
         "links": [],
         "portMappings": [
             {
