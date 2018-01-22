@@ -40,7 +40,7 @@ jobs:
       - TF_IN_AUTOMATION: "1"
     steps:
       - attach_workspace:
-          at: terraform
+          at: ./
       - run:
           name: Test terraform plan
           command: |
