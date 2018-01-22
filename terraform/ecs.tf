@@ -39,7 +39,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_mem_high" {
   dimensions {
     ClusterName = "${aws_ecs_cluster.main.name}"
   }
-  alarm_actions = ["${aws_appautoscaling_policy.ecs_up.arn}"]
+  alarm_actions = ["${aws_autoscaling_policy.ecs_up.arn}"]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs_mem_low" {
@@ -54,7 +54,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_mem_low" {
   dimensions {
     ClusterName = "${aws_ecs_cluster.main.name}"
   }
-  alarm_actions = ["${aws_appautoscaling_policy.ecs_down.arn}"]
+  alarm_actions = ["${aws_autoscaling_policy.ecs_down.arn}"]
 }
 
 # Autoscaling Policies
