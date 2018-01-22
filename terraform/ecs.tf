@@ -57,51 +57,22 @@ resource "aws_cloudwatch_metric_alarm" "ecs_mem_low" {
   alarm_actions = ["${aws_appautoscaling_policy.ecs_down.arn}"]
 }
 
-# # AppAutoscale Target for ecs service
-# resource "aws_appautoscaling_target" "ecs_target" {
-#   max_capacity       = 4
-#   min_capacity       = 2
-#   resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.test-http.name}"
-#   # role_arn           = "arn:aws:iam::373776389706:role/ecsAutoscaleRole"
-#   role_arn           = "${aws_iam_role.ecs_service_role.arn}"
-#   scalable_dimension = "ecs:service:DesiredCount"
-#   service_namespace  = "ecs"
-#
-#   depends_on = [
-#     "aws_ecs_cluster.main",
-#   ]
-# }
-
 # Autoscaling Policies
 
 resource "aws_autoscaling_policy" "ecs_up" {
-  name                      = "ecs_scale_up_${terraform.workspace}"
-  autoscaling_group_name    = "${aws_autoscaling_group.ecs-cluster.name}"
-  scalable_dimension        = "ecs:service:DesiredCount"
-
-  step_scaling_policy_configuration {
-    adjustment_type         = "ChangeInCapacity"
-    cooldown                = "300"
-    step_adjustment {
-      metric_interval_lower_bound = 0
-      scaling_adjustment          = 1
-    }
-  }
+  name = "ecs_scale_up_${terraform.workspace}"
+  autoscaling_group_name = "${aws_autoscaling_group.ecs-cluster.name}"
+  adjustment_type = "ChangeInCapacity"
+  cooldown = 120
+  scaling_adjustment = 1
   depends_on = ["aws_autoscaling_group.ecs-cluster"]
 }
 
 resource "aws_autoscaling_policy" "ecs_down" {
-  name                      = "ecs_scale_down_${terraform.workspace}"
-  autoscaling_group_name    = "${aws_autoscaling_group.ecs-cluster.name}"
-  scalable_dimension        = "ecs:service:DesiredCount"
-
-  step_scaling_policy_configuration {
-    adjustment_type         = "ChangeInCapacity"
-    cooldown                = "300"
-    step_adjustment {
-      metric_interval_lower_bound = 0
-      scaling_adjustment          = -1
-    }
-  }
+  name = "ecs_scale_down_${terraform.workspace}"
+  autoscaling_group_name = "${aws_autoscaling_group.ecs-cluster.name}"
+  adjustment_type = "ChangeInCapacity"
+  cooldown = 120
+  scaling_adjustment = -1
   depends_on = ["aws_autoscaling_group.ecs-cluster"]
 }
