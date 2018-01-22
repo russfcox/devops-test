@@ -48,9 +48,9 @@ jobs:
             terraform init -input=false
             terraform workspace select test
             terraform validate
-            terraform plan -input=false -out=tfplan-${CIRCLE_SHA1}-${CIRCLE_BRANCH}.out
+            terraform plan -out=tfplan -input=false
       - store_artifacts:
-          path: tfplan-${CIRCLE_SHA1}-${CIRCLE_BRANCH}.out
+          path: ./tfplan
   awstest:
     docker:
       - image: hashicorp/terraform:light
