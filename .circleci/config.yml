@@ -50,7 +50,7 @@ jobs:
             terraform validate
             terraform plan -out=tfplan -input=false
       - store_artifacts:
-          path: ./tfplan
+          path: terraform/tfplan
   awstest:
     docker:
       - image: hashicorp/terraform:light
