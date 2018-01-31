@@ -1,6 +1,8 @@
 resource "aws_ecs_cluster" "main" {
     name = "ECS${terraform.workspace}"
+# comment
 }
+
 
 resource "aws_autoscaling_group" "ecs-cluster" {
     # availability_zones = ["${var.availability_zone}", "${var.availability_zone2}"]
